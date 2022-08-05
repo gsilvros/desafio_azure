@@ -11,6 +11,10 @@
 			"type": "string",
 			"defaultValue": "https://kv-desafio-gi.vault.azure.net/"
 		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0804-140340-fikkby3c"
+		},
 		"desafio_gi_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://desafiogi.dfs.core.windows.net/"
@@ -34,6 +38,30 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricks1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-6347156145735195.15.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "kv_desafio_gi",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "kv-databrricks-gi"
+					},
+					"existingClusterId": "[parameters('AzureDatabricks1_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/kv_desafio_gi')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/desafio_gi')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -54,6 +82,289 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/kv_desafio_gi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_gi')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "desafio_gi",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "dataset",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "INCIDENT_NUMBER",
+						"type": "String"
+					},
+					{
+						"name": "OFFENSE_CODE",
+						"type": "String"
+					},
+					{
+						"name": "OFFENSE_CODE_GROUP",
+						"type": "String"
+					},
+					{
+						"name": "OFFENSE_DESCRIPTION",
+						"type": "String"
+					},
+					{
+						"name": "DISTRICT",
+						"type": "String"
+					},
+					{
+						"name": "REPORTING_AREA",
+						"type": "String"
+					},
+					{
+						"name": "SHOOTING",
+						"type": "String"
+					},
+					{
+						"name": "OCCURRED_ON_DATE",
+						"type": "String"
+					},
+					{
+						"name": "YEAR",
+						"type": "String"
+					},
+					{
+						"name": "MONTH",
+						"type": "String"
+					},
+					{
+						"name": "DAY_OF_WEEK",
+						"type": "String"
+					},
+					{
+						"name": "HOUR",
+						"type": "String"
+					},
+					{
+						"name": "UCR_PART",
+						"type": "String"
+					},
+					{
+						"name": "STREET",
+						"type": "String"
+					},
+					{
+						"name": "LATITUDE",
+						"type": "String"
+					},
+					{
+						"name": "LONGITUDE",
+						"type": "String"
+					},
+					{
+						"name": "LOCATION",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/desafio_gi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataset_gi_output')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "desafio_gi",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "dataset",
+						"fileSystem": "bronze"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/desafio_gi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/parameters')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "desafio_gi",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "parameters.csv",
+						"folderPath": "parameters",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": "|",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "statusProcess|fileName|database|table|delimiter",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/desafio_gi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/bronze')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "parameters",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 3,
+							"activities": [
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(item().statusProcess,'1')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Notebook1",
+												"type": "DatabricksNotebook",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"notebookPath": "/Users/gsilvros@emeal.nttdata.com/Beca",
+													"baseParameters": {
+														"file_name": {
+															"value": "@item().fileName",
+															"type": "Expression"
+														},
+														"table_name": {
+															"value": "@concat(item().table, '_desafiogi')\n\n",
+															"type": "Expression"
+														},
+														"database": {
+															"value": "@item().database",
+															"type": "Expression"
+														},
+														"delimiter": {
+															"value": "@item().delimiter",
+															"type": "Expression"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "AzureDatabricks1",
+													"type": "LinkedServiceReference"
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/parameters')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
 			]
 		}
 	]
