@@ -1,0 +1,23 @@
+{
+	"name": "dataset_gi_output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "desafio_gi",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "dataset",
+				"fileSystem": "bronze"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
