@@ -1,0 +1,29 @@
+{
+	"name": "parameters",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "desafio_gi",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "parameters.csv",
+				"folderPath": "parameters",
+				"fileSystem": "raw"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "statusProcess|fileName|database|table|delimiter",
+				"type": "String"
+			}
+		]
+	}
+}
