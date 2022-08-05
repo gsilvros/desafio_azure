@@ -1,0 +1,9 @@
+{
+	"name": "desafio-giovanna",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "dca56530-7315-4bb8-8216-884d3f884b24",
+		"tenantId": "a49e2ad8-3b8d-40e8-8c45-1505c9a243d3"
+	}
+}
