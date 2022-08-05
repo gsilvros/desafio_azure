@@ -1,0 +1,10 @@
+{
+	"name": "kv_desafio_gi",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kv-desafio-gi.vault.azure.net/"
+		}
+	}
+}
