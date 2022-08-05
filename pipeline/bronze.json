@@ -74,7 +74,20 @@
 											"secureOutput": false,
 											"secureInput": false
 										},
-										"userProperties": []
+										"userProperties": [],
+										"typeProperties": {
+											"notebookPath": "/Users/gsilvros@emeal.nttdata.com/Beca",
+											"baseParameters": {
+												"file_name": "@item().fileName",
+												"table_name": "@concat(item().table, '_desafiogi')\n\n",
+												"database": "@item().database",
+												"delimiter": "@item().delimiter"
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "AzureDatabricks1",
+											"type": "LinkedServiceReference"
+										}
 									}
 								]
 							}
